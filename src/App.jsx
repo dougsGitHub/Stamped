@@ -634,27 +634,74 @@ export default function App() {
 
         {view === 'view-letter' && receivedLetter && (
           <div className="animate-in slide-in-from-top-12 duration-700 flex flex-col items-center gap-10 py-10">
-            <div className="flex items-center gap-4 text-xs font-bold text-slate-400"><span className={!isFlipped ? "text-blue-600 font-black" : ""}>FRONT</span><button onClick={() => setIsFlipped(!isFlipped)} className="bg-slate-200 p-2 rounded-full shadow-sm"><RotateCw size={16} /></button><span className={isFlipped ? "text-blue-600 font-black" : ""}>BACK</span></div>
+            <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
+              <span className={!isFlipped ? "text-blue-600 font-black" : ""}>FRONT</span>
+              <button onClick={() => setIsFlipped(!isFlipped)} className="bg-slate-200 p-2 rounded-full shadow-sm">
+                <RotateCw size={16} />
+              </button>
+              <span className={isFlipped ? "text-blue-600 font-black" : ""}>BACK</span>
+            </div>
+
             <div className="perspective-1000 w-full max-w-[600px] aspect-[1.5/1]">
               <div className={`relative w-full h-full transition-transform duration-1000 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                <div className={`absolute inset-0 backface-hidden rounded-xl overflow-hidden shadow-2xl border-8 border-white flex items-center justify-center`}><img src={receivedLetter.artUrl || POSTCARD_ART_OPTIONS[0].url} className="absolute inset-0 w-full h-full object-cover" alt="Art" /><div className="absolute inset-0 bg-black/10" /><div className="relative z-10 bg-black/20 backdrop-blur-[2px] p-6 rounded-lg border border-white/20"><div className="text-white text-5xl font-black italic tracking-tighter opacity-90 drop-shadow-xl uppercase">Greetings</div></div></div>
-                <div className={`absolute inset-0 backface-hidden rotate-y-180 rounded-xl ${receivedLetter.paper?.class || 'bg-white'} shadow-2xl border-2 border-slate-100 flex p-8`} style={receivedLetter.paper?.style}>
-                  <div className="flex-1 pr-6 border-r border-slate-200 flex flex-col justify-center overflow-hidden">{receivedLetter.drawing ? ( <img src={receivedLetter.drawing} className="max-h-full w-full object-contain drop-shadow-sm" alt="Drawing" /> ) : ( <div className="text-3xl font-serif italic leading-relaxed" style={{ color: receivedLetter.ink?.color }}> "{receivedLetter.message}" </div> )}</div>
-                  <div className="w-48 pl-6 flex flex-col items-center justify-between">
-                    <div className="self-end"><StampCard stamp={receivedLetter.stamp} size="md" isPostmarked={true} /></div>
-                    <div className="w-full mt-auto mb-4 border-t border-slate-300 pt-3 opacity-60">
-                       <p className="text-[10px] font-serif italic leading-tight text-slate-800">{receivedLetter.address?.line1 || ''}</p>
-                       <p className="text-[10px] font-serif italic leading-tight text-slate-800">{receivedLetter.address?.line2 || ''}</p>
-                       <p className="text-[10px] font-serif italic leading-tight text-slate-800">{receivedLetter.address?.line3 || ''}</p>
-                    </div>
-                    <div className="text-[10px] font-mono text-slate-300 uppercase tracking-widest text-center">Sent via Stamped<br/>{new Date(receivedLetter.timestamp).toLocaleDateString()}</div>
+                
+                {/* FRONT FACE - Pushed forward 1px to prevent ghosting */}
+                <div 
+                  className="absolute inset-0 backface-hidden rounded-xl overflow-hidden shadow-2xl border-4 sm:border-8 border-white flex items-center justify-center" 
+                  style={{ transform: 'translateZ(1px)' }}
+                >
+                  <img src={receivedLetter.artUrl || POSTCARD_ART_OPTIONS[0].url} className="absolute inset-0 w-full h-full object-cover" alt="Art" />
+                  <div className="absolute inset-0 bg-black/10" />
+                  <div className="relative z-10 bg-black/20 backdrop-blur-[2px] p-4 sm:p-6 rounded-lg border border-white/20">
+                    <div className="text-white text-3xl sm:text-5xl font-black italic tracking-tighter opacity-90 drop-shadow-xl uppercase">Greetings</div>
                   </div>
                 </div>
+
+                {/* BACK FACE - Flipped and pushed forward 1px on its own plane */}
+                <div 
+                  className={`absolute inset-0 backface-hidden rotate-y-180 rounded-xl ${receivedLetter.paper?.class || 'bg-white'} shadow-2xl border-2 border-slate-100 flex p-4 sm:p-8`} 
+                  style={{ ...receivedLetter.paper?.style, transform: 'rotateY(180deg) translateZ(1px)' }}
+                >
+                  {/* Message Area */}
+                  <div className="flex-1 pr-3 sm:pr-6 border-r border-slate-200 flex flex-col justify-center overflow-hidden">
+                    {receivedLetter.drawing ? ( 
+                      <img src={receivedLetter.drawing} className="max-h-full w-full object-contain drop-shadow-sm" alt="Drawing" /> 
+                    ) : ( 
+                      <div className="text-xl sm:text-3xl font-serif italic leading-relaxed" style={{ color: receivedLetter.ink?.color }}> 
+                        "{receivedLetter.message}" 
+                      </div> 
+                    )}
+                  </div>
+
+                  {/* Stamp & Address Area */}
+                  <div className="w-32 sm:w-48 pl-3 sm:pl-6 flex flex-col items-center justify-between">
+                    <div className="self-end scale-75 sm:scale-100 origin-top-right">
+                      <StampCard stamp={receivedLetter.stamp} size="md" isPostmarked={true} />
+                    </div>
+                    
+                    <div className="w-full mt-auto mb-2 sm:mb-4 border-t border-slate-300 pt-2 sm:pt-3 opacity-60">
+                       <p className="text-[7px] sm:text-[10px] font-serif italic leading-tight text-slate-800">{receivedLetter.address?.line1 || ''}</p>
+                       <p className="text-[7px] sm:text-[10px] font-serif italic leading-tight text-slate-800">{receivedLetter.address?.line2 || ''}</p>
+                       <p className="text-[7px] sm:text-[10px] font-serif italic leading-tight text-slate-800">{receivedLetter.address?.line3 || ''}</p>
+                    </div>
+
+                    <div className="text-[8px] sm:text-[10px] font-mono text-slate-300 uppercase tracking-widest text-center leading-tight">
+                      Sent via Stamped<br/>{new Date(receivedLetter.timestamp).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
+
             <div className="text-center space-y-6 max-w-xs">
               <h3 className="font-black text-xl text-slate-800">Mail Saved to Inbox</h3>
-              <button onClick={() => { window.history.pushState({}, '', window.location.pathname); setView('dashboard'); }} className="w-full bg-blue-600 text-white px-8 py-5 rounded-3xl font-black text-lg flex items-center justify-center gap-3 shadow-xl active:translate-y-1 transition-all"> <Gift size={24} /> Get Packs </button>
+              <button 
+                onClick={() => { window.history.pushState({}, '', window.location.pathname); setView('dashboard'); }} 
+                className="w-full bg-blue-600 text-white px-8 py-5 rounded-3xl font-black text-lg flex items-center justify-center gap-3 shadow-xl active:translate-y-1 transition-all"
+              > 
+                <Gift size={24} /> Get Packs 
+              </button>
             </div>
           </div>
         )}

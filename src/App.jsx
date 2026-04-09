@@ -549,35 +549,108 @@ export default function App() {
           </div>
         )}
 
-        {view === 'compose' && (
+{view === 'compose' && (
           <div className="animate-in fade-in duration-300">
-            <button onClick={() => setView('dashboard')} className="mb-6 flex items-center gap-2 text-slate-500 font-bold text-sm uppercase tracking-wider"><ArrowLeft size={16} /> Cancel</button>
+            <button onClick={() => setView('dashboard')} className="mb-6 flex items-center gap-2 text-slate-500 font-bold text-sm uppercase tracking-wider">
+              <ArrowLeft size={16} /> Cancel
+            </button>
+            
             {!sentSuccess ? (
               <div className="grid lg:grid-cols-12 gap-8 items-start">
+                {/* Left Sidebar: Controls */}
                 <div className="lg:col-span-4 space-y-6 bg-white p-6 rounded-3xl border shadow-sm order-2 lg:order-1 relative z-50 overflow-y-auto max-h-[85vh] custom-scrollbar">
-                  <div><label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Message Type</label><div className="grid grid-cols-2 gap-2"><button onClick={() => setComposeMode('text')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${composeMode === 'text' ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Type size={18}/> Type</button><button onClick={() => setComposeMode('draw')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${composeMode === 'draw' ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Pencil size={18}/> Draw</button></div></div>
-                  {composeMode === 'draw' && (<div><label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Drawing Tools</label><div className="grid grid-cols-2 gap-2"><button onClick={() => setDrawTool('pen')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${drawTool === 'pen' ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Pencil size={18}/> Pen</button><button onClick={() => setDrawTool('eraser')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${drawTool === 'eraser' ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Eraser size={18}/> Eraser</button></div></div>)}
-                  <div className="grid grid-cols-2 gap-4"><div><label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Paper</label><div className="flex flex-wrap gap-2">{PAPER_TYPES.map(p => (<button key={p.id} onClick={() => setSelectedPaper(p)} className={`w-8 h-8 rounded-full border-2 transition-all ${selectedPaper.id === p.id ? 'border-blue-500 scale-110 shadow' : 'border-transparent'}`} style={{...p.style, backgroundColor: p.id === 'parchment' ? '#f4e4bc' : p.id === 'blueprint' ? '#1e3a8a' : '#fff'}} />))}</div></div><div><label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Ink</label><div className="flex flex-wrap gap-2">{INK_COLORS.map(c => (<button key={c.id} onClick={() => setSelectedInk(c)} className={`w-8 h-8 rounded-full border-2 transition-all ${selectedInk.id === c.id ? 'border-slate-800 scale-110 shadow' : 'border-transparent'}`} style={{ backgroundColor: c.color }} />))}</div></div></div>
-                  <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100"><button onClick={() => setShowArtGallery(!showArtGallery)} className="w-full flex items-center justify-between group"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-lg bg-cover bg-center border border-white shadow-sm" style={{ backgroundImage: `url(${selectedArt.url})` }} /><div className="text-left"><label className="text-[10px] font-black uppercase text-slate-400 block">Postcard Art</label><span className="text-sm font-bold text-slate-700">{selectedArt.label}</span></div></div><div className={`transition-transform duration-300 ${showArtGallery ? 'rotate-180' : ''}`}><ChevronDown size={20} className="text-slate-400" /></div></button>{showArtGallery && (<div className="mt-4 grid grid-cols-3 gap-2 animate-in slide-in-from-top-2 duration-300">{POSTCARD_ART_OPTIONS.map(art => (<button key={art.id} onClick={() => { setSelectedArt(art); setIsFlipped(false); }} className={`aspect-video rounded-md bg-cover bg-center transition-all ${selectedArt.id === art.id ? 'ring-2 ring-blue-500 scale-95 shadow-inner' : 'opacity-70 hover:opacity-100 hover:scale-105'}`} style={{ backgroundImage: `url(${art.url})` }} />))}</div>)}</div>
-                  <button onClick={handleSendLetter} disabled={isSending || (composeMode === 'text' && !message.trim()) || !inspecting} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all disabled:opacity-50 shadow-xl active:scale-95">{isSending ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />} Send Letter</button>
+                  <div>
+                    <label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Message Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button onClick={() => setComposeMode('text')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${composeMode === 'text' ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Type size={18}/> Type</button>
+                      <button onClick={() => setComposeMode('draw')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${composeMode === 'draw' ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Pencil size={18}/> Draw</button>
+                    </div>
+                  </div>
+                  
+                  {composeMode === 'draw' && (
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Drawing Tools</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button onClick={() => setDrawTool('pen')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${drawTool === 'pen' ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Pencil size={18}/> Pen</button>
+                        <button onClick={() => setDrawTool('eraser')} className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all ${drawTool === 'eraser' ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Eraser size={18}/> Eraser</button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Paper</label>
+                      <div className="flex flex-wrap gap-2">
+                        {PAPER_TYPES.map(p => (<button key={p.id} onClick={() => setSelectedPaper(p)} className={`w-8 h-8 rounded-full border-2 transition-all ${selectedPaper.id === p.id ? 'border-blue-500 scale-110 shadow' : 'border-transparent'}`} style={{...p.style, backgroundColor: p.id === 'parchment' ? '#f4e4bc' : p.id === 'blueprint' ? '#1e3a8a' : '#fff'}} />))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 block mb-2">Ink</label>
+                      <div className="flex flex-wrap gap-2">
+                        {INK_COLORS.map(c => (<button key={c.id} onClick={() => setSelectedInk(c)} className={`w-8 h-8 rounded-full border-2 transition-all ${selectedInk.id === c.id ? 'border-slate-800 scale-110 shadow' : 'border-transparent'}`} style={{ backgroundColor: c.color }} />))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                    <button onClick={() => setShowArtGallery(!showArtGallery)} className="w-full flex items-center justify-between group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-cover bg-center border border-white shadow-sm" style={{ backgroundImage: `url(${selectedArt.url})` }} />
+                        <div className="text-left"><label className="text-[10px] font-black uppercase text-slate-400 block">Postcard Art</label><span className="text-sm font-bold text-slate-700">{selectedArt.label}</span></div>
+                      </div>
+                      <div className={`transition-transform duration-300 ${showArtGallery ? 'rotate-180' : ''}`}><ChevronDown size={20} className="text-slate-400" /></div>
+                    </button>
+                    {showArtGallery && (
+                      <div className="mt-4 grid grid-cols-3 gap-2 animate-in slide-in-from-top-2 duration-300">
+                        {POSTCARD_ART_OPTIONS.map(art => (<button key={art.id} onClick={() => { setSelectedArt(art); setIsFlipped(false); }} className={`aspect-video rounded-md bg-cover bg-center transition-all ${selectedArt.id === art.id ? 'ring-2 ring-blue-500 scale-95 shadow-inner' : 'opacity-70 hover:opacity-100 hover:scale-105'}`} style={{ backgroundImage: `url(${art.url})` }} />))}
+                      </div>
+                    )}
+                  </div>
+
+                  <button onClick={handleSendLetter} disabled={isSending || (composeMode === 'text' && !message.trim()) || !inspecting} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all disabled:opacity-50 shadow-xl active:scale-95">
+                    {isSending ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />} Send Letter
+                  </button>
                 </div>
+
+                {/* Right Area: Card Preview */}
                 <div className="lg:col-span-8 flex flex-col items-center gap-6 order-1 lg:order-2">
-                  <div className="flex items-center gap-4 text-xs font-bold text-slate-400"><span className={!isFlipped ? "text-blue-600 font-black" : ""}>FRONT</span><button onClick={() => setIsFlipped(!isFlipped)} className="bg-slate-200 p-2 rounded-full hover:bg-slate-300 shadow-sm"><RotateCw size={16} /></button><span className={isFlipped ? "text-blue-600 font-black" : ""}>BACK</span></div>
-                  <div className={`perspective-1000 w-full max-w-[500px] aspect-[1.5/1]`}>
+                  <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
+                    <span className={!isFlipped ? "text-blue-600 font-black" : ""}>FRONT</span>
+                    <button onClick={() => setIsFlipped(!isFlipped)} className="bg-slate-200 p-2 rounded-full hover:bg-slate-300 shadow-sm"><RotateCw size={16} /></button>
+                    <span className={isFlipped ? "text-blue-600 font-black" : ""}>BACK</span>
+                  </div>
+
+                  <div className="perspective-1000 w-full max-w-[500px] aspect-[1.5/1]">
                     <div className={`relative w-full h-full transition-transform duration-700 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                      <div className={`absolute inset-0 backface-hidden rounded-xl shadow-2xl overflow-hidden border-4 border-white flex items-center justify-center`}><img src={selectedArt.url} className="absolute inset-0 w-full h-full object-cover" alt="Art" /><div className="absolute inset-0 bg-black/10" /><div className="relative z-10 bg-black/20 backdrop-blur-[2px] p-4 rounded-lg border border-white/20"><div className="text-white text-4xl font-black italic tracking-tighter opacity-90 drop-shadow-lg uppercase">Greetings</div></div></div>
-                      <div className={`absolute inset-0 backface-hidden rotate-y-180 rounded-xl ${selectedPaper.class} shadow-2xl border-2 border-slate-100 flex p-6`} style={selectedPaper.style}>
+                      
+                      {/* FRONT FACE */}
+                      <div 
+                        className={`absolute inset-0 backface-hidden rounded-xl shadow-2xl overflow-hidden border-4 border-white flex items-center justify-center ${isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                        style={{ transform: 'translateZ(1px)' }}
+                      >
+                        <img src={selectedArt.url} className="absolute inset-0 w-full h-full object-cover" alt="Art" />
+                        <div className="absolute inset-0 bg-black/10" />
+                        <div className="relative z-10 bg-black/20 backdrop-blur-[2px] p-4 rounded-lg border border-white/20">
+                          <div className="text-white text-4xl font-black italic tracking-tighter opacity-90 drop-shadow-lg uppercase">Greetings</div>
+                        </div>
+                      </div>
+
+                      {/* BACK FACE */}
+                      <div 
+                        className={`absolute inset-0 backface-hidden rotate-y-180 rounded-xl ${selectedPaper.class} shadow-2xl border-2 border-slate-100 flex p-6 ${!isFlipped ? 'pointer-events-none' : 'pointer-events-auto'}`} 
+                        style={{ ...selectedPaper.style, transform: 'rotateY(180deg) translateZ(1px)' }}
+                      >
                         <div className="flex-1 pr-4 border-r border-slate-200 flex flex-col relative z-0">
                           {composeMode === 'text' ? (
                             <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Type your message here..." className="w-full h-full bg-transparent border-none outline-none resize-none font-serif text-xl leading-relaxed italic placeholder:text-slate-300" style={{ color: selectedInk.color }} />
                           ) : (
                             <div className={`relative w-full h-full rounded overflow-hidden touch-none border-2 border-dashed transition-colors ${['classic', 'notebook'].includes(selectedPaper.id) ? 'bg-slate-50/50 border-slate-200' : 'bg-transparent border-slate-400/40'}`}>
                                <canvas ref={canvasRef} width={600} height={400} onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing} onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing} className="w-full h-full rounded block relative z-10" />
-                               <button onClick={(e) => { e.stopPropagation(); clearCanvas(); }} className="absolute bottom-2 right-2 p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-100 z-20 border border-red-100"><Trash2 size={16}/></button>
+                               <button onClick={(e) => { e.stopPropagation(); clearCanvas(); }} className="absolute bottom-2 right-2 p-2 bg-red-50 text-red-500 rounded-full hover:bg-red-100 z-20 border border-red-100 pointer-events-auto"><Trash2 size={16}/></button>
                             </div>
                           )}
                         </div>
-                        {/* RIGHT COLUMN: Pointer events handled to prevent "dead zone" in drawing area */}
+                        
                         <div className="flex-none w-36 pl-4 flex flex-col items-center justify-start gap-1 pt-1 relative z-50 overflow-hidden pointer-events-none">
                           <div className="flex flex-col items-center gap-1 scale-90 origin-top pointer-events-auto">
                             {inspecting ? (
@@ -586,7 +659,7 @@ export default function App() {
                                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-sm transition-opacity"><RotateCw className="text-white" size={20} /></div>
                               </div>
                             ) : (
-                              <button onClick={() => setView('select-stamp')} className="w-32 h-40 border-2 border-dashed border-slate-300 rounded-sm bg-slate-50 flex flex-col items-center justify-center text-slate-400 hover:bg-white hover:border-blue-400 transition-all group"><Plus size={24} className="mb-2 group-hover:scale-110" /><span className="text-[10px] font-black uppercase text-center px-1">Attach Stamp</span></button>
+                              <button onClick={() => setView('select-stamp')} className="w-32 h-40 border-2 border-dashed border-slate-300 rounded-sm bg-slate-50 flex flex-col items-center justify-center text-slate-400 hover:bg-white hover:border-blue-400 transition-all group pointer-events-auto"><Plus size={24} className="mb-2 group-hover:scale-110" /><span className="text-[10px] font-black uppercase text-center px-1">Attach Stamp</span></button>
                             )}
                           </div>
                           <div className="w-full mt-2 space-y-1 pt-1 border-t border-slate-200/50 pointer-events-auto">
@@ -604,11 +677,11 @@ export default function App() {
                 </div>
               </div>
             ) : (
+              /* Success Screen */
               <div className="max-w-md mx-auto bg-white p-10 rounded-3xl border shadow-xl text-center space-y-6 animate-in zoom-in-95">
                 <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto"><Check size={40} strokeWidth={3} /></div>
                 <h2 className="text-3xl font-black">Postcard Sent!</h2>
                 
-                {/* NEW: Explicit Letter Code Display */}
                 <div className="space-y-4">
                   <div className="space-y-2 text-left">
                     <p className="text-[10px] text-slate-400 font-black uppercase ml-1">Letter Code (ID)</p>
@@ -618,13 +691,19 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="space-y-2"><p className="text-[10px] text-slate-400 font-black uppercase text-left ml-1">Share Link</p><div className="bg-slate-50 p-4 rounded-xl border text-xs font-mono truncate">{shareLink}</div><button onClick={() => { const t = document.createElement("textarea"); t.value = shareLink; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg">Copy Link</button></div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-slate-400 font-black uppercase text-left ml-1">Share Link</p>
+                    <div className="bg-slate-50 p-4 rounded-xl border text-xs font-mono truncate">{shareLink}</div>
+                    <button onClick={() => { const t = document.createElement("textarea"); t.value = shareLink; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-lg">Copy Link</button>
+                  </div>
                   
                   {!isNamingContact && !contacts.some(c => c.uid === shareId) ? (
                     <button onClick={() => setIsNamingContact(true)} className="w-full bg-blue-50 text-blue-600 p-4 rounded-xl border border-blue-100 flex items-center justify-between group hover:bg-blue-100 transition-all"><span className="font-bold text-sm">Save Recipient?</span><UserPlus size={20} /></button>
                   ) : !contacts.some(c => c.uid === shareId) ? (
                     <div className="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3"><div className="flex gap-2"><input autoFocus type="text" value={newContactNickname} onChange={(e) => setNewContactNickname(e.target.value)} placeholder="e.g. Grandma" className="flex-1 bg-white border border-blue-200 rounded-lg px-3 py-2 text-sm outline-none" /><button onClick={saveContact} disabled={!newContactNickname.trim()} className="bg-blue-600 text-white p-2 rounded-lg"><Save size={20} /></button></div></div>
-                  ) : ( <div className="bg-emerald-50 text-emerald-600 p-4 rounded-xl border border-emerald-100 flex items-center justify-center gap-2 font-bold text-sm"><Check size={18} /> Address Saved</div> )}
+                  ) : ( 
+                    <div className="bg-emerald-50 text-emerald-600 p-4 rounded-xl border border-emerald-100 flex items-center justify-center gap-2 font-bold text-sm"><Check size={18} /> Address Saved</div> 
+                  )}
                 </div>
                 <button onClick={closeSentView} className="w-full py-4 text-slate-500 font-bold uppercase text-xs hover:text-slate-800">Back to Desk</button>
               </div>
